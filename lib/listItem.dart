@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-abstract class ListItem {
+abstract class FoodListItem {
   Widget buildName(BuildContext context);
 
   Widget buildCals(BuildContext context);

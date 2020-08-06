@@ -22,74 +22,150 @@ class MealScreen extends StatefulWidget {
 }
 
 class _MealScreenState extends State<MealScreen> {
+  final overlayWidgets = List<Widget>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.meal.name),
       ),
-      body: Column(
+      body: Stack(
         children: <Widget>[
-          Center(
-              heightFactor: 3,
-              child: Text("What you ate for " + widget.meal.name)
+            Column(
+              children: <Widget>[
+                Center(
+                    heightFactor: 3,
+                    child: Text("What you ate for " + widget.meal.name)
+                ),
+                ListView.builder(
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    itemCount: widget.meal.foods.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return buildFoodRow(context, widget.meal.foods[index]);
+                    }
+                ),
+              ]
           ),
-          ListView.builder(
-              scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              itemCount: widget.meal.foods.length,
-              itemBuilder: (BuildContext context, int index) {
-                return buildFood(context, widget.meal.foods[index]);
-              }
-          ),
-        ]
+      ] + overlayWidgets,
       )
     );
   }
 
-  Widget buildFood(BuildContext context, Food food) {
+  Widget buildFoodRow(BuildContext context, Food food) {
     return Container(
         height: 50,
         margin: EdgeInsets.all(6),
-        decoration: BoxDecoration(
-          border: Border(
-              top: BorderSide(width: 1, color: Colors.blueGrey),
-              bottom: BorderSide(width: 1, color: Colors.blueGrey)
-          ),
-        ),
+        decoration: buildFoodEntryBoxDecoration(),
         child: InkWell (
           child: Container(
               child: Row(
-                  children: <Widget>[
-                    Container(
-                        width: MediaQuery.of(context).size.width * 0.7 - 6,
-                        decoration: BoxDecoration(
-                            border: Border(
-                              right: BorderSide(width: 2, color: Colors.blueGrey),
-                              left: BorderSide(width: 2, color: Colors.blueGrey),
-                            )
-                        ),
-                        child: food.buildName(context)
-                    ),
-                    Container(
-                        width: MediaQuery.of(context).size.width * 0.3 - 6,
-                        decoration: BoxDecoration(
-                            border: Border(
-                                right: BorderSide(width: 2, color: Colors.blueGrey)
-                            )
-                        ),
-                        child: food.buildCals(context)
-                    )
-                  ]
+                  children: getFoodRowWidgets(context, food)
               )
           ),
-          onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => FoodScreen(
-                  food: food
-              ))
-          ),
+          onTap: () => foodRowOnTap(context, food),
         ),
     );
+  }
+
+  BoxDecoration buildFoodEntryBoxDecoration() {
+    return BoxDecoration(
+      border: Border(
+          top: BorderSide(width: 1, color: Colors.blueGrey),
+          bottom: BorderSide(width: 1, color: Colors.blueGrey)
+      ),
+    );
+  }
+
+  List<Widget> getFoodRowWidgets(BuildContext context, Food food) {
+    return <Widget>[
+      getFoodNameWidget(context, food),
+      getFoodCalsWidget(context, food)
+    ];
+  }
+
+  Container getFoodNameWidget(BuildContext context, Food food) {
+    return Container(
+        width: getNameWidth(context),
+        decoration: buildFoodNameDecorationBox(),
+        child: food.buildName(context)
+    );
+  }
+
+  double getNameWidth(BuildContext context) => MediaQuery.of(context).size.width * 0.7 - 6;
+
+  BoxDecoration buildFoodNameDecorationBox() {
+    return BoxDecoration(
+        border: Border(
+          right: BorderSide(width: 2, color: Colors.blueGrey),
+          left: BorderSide(width: 2, color: Colors.blueGrey),
+        )
+    );
+  }
+
+  Container getFoodCalsWidget(BuildContext context, Food food) {
+    return Container(
+        width: getFoodCalsWidth(context),
+        decoration: buildFoodCalsDecorationBox(),
+        child: food.buildCals(context)
+    );
+  }
+
+  double getFoodCalsWidth(BuildContext context) => MediaQuery.of(context).size.width * 0.3 - 6;
+
+  BoxDecoration buildFoodCalsDecorationBox() {
+    return BoxDecoration(
+        border: Border(
+            right: BorderSide(width: 2, color: Colors.blueGrey)
+        )
+    );
+  }
+
+  Future foodRowOnTap(BuildContext context, Food food) {
+    return Future(() {
+      setState(() {
+        addFoodOverlay(food);
+      });
+    });
+  }
+  
+  void closeFoodOverlayIfExists() {
+    setState(() {
+      overlayWidgets.clear();
+    });
+  }
+
+  void addFoodOverlay(Food food) {
+    overlayWidgets.add(
+        buildOpaqueBackgroundContainer()
+    );
+    overlayWidgets.add(
+        buildFoodContainer(food)
+    );
+  }
+
+  Container buildOpaqueBackgroundContainer() {
+    return Container(
+        color: Color.fromARGB(230, 60, 60, 60),
+        child: GestureDetector(
+          onTap: () => closeFoodOverlayIfExists(),
+        )
+    );
+  }
+
+  Align buildFoodContainer(Food food) {
+    return Align(
+          alignment: Alignment.center,
+          child: Container(
+              height: MediaQuery.of(context).size.height * 0.8,
+              width: MediaQuery.of(context).size.width * 0.8,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.all(Radius.elliptical(5, 5)),
+              ),
+              child: Center(child: Text(food.name))
+          )
+      );
   }
 }

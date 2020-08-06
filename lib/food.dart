@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertestproj/listItem.dart';
 import 'package:fluttertestproj/nutritionData.dart';
 
-class Food implements ListItem{
+class Food implements FoodListItem{
   final String name;
   final NutritionData nutrition;
 
