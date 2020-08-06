@@ -1,5 +1,6 @@
+import 'package:eventhandler/eventhandler.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertestproj/foodScreen.dart';
+import 'package:fluttertestproj/foodOverlay.dart';
 import 'package:fluttertestproj/meal.dart';
 
 import 'food.dart';
@@ -22,7 +23,28 @@ class MealScreen extends StatefulWidget {
 }
 
 class _MealScreenState extends State<MealScreen> {
-  final overlayWidgets = List<Widget>();
+  _MealScreenState() {
+    _foodOverlay = FoodOverlay();
+    EventHandler().subscribe(_overlayCloseEventHandler);
+  }
+  var _foodOverlay;
+
+  void _overlayCloseEventHandler(OverlayCloseEvent event) {
+    closeFoodOverlay();
+  }
+
+  void closeFoodOverlay() {
+    setState(() {
+      _foodOverlay.clearOverlay();
+    });
+  }
+
+  @override
+  void setState(fn) {
+    if(mounted){
+      super.setState(fn);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +70,7 @@ class _MealScreenState extends State<MealScreen> {
                 ),
               ]
           ),
-      ] + overlayWidgets,
+      ] + _foodOverlay.toWidgetList(),
       )
     );
   }
@@ -58,13 +80,15 @@ class _MealScreenState extends State<MealScreen> {
         height: 50,
         margin: EdgeInsets.all(6),
         decoration: buildFoodEntryBoxDecoration(),
-        child: InkWell (
-          child: Container(
-              child: Row(
-                  children: getFoodRowWidgets(context, food)
-              )
+        child: Material(
+          child: InkWell (
+            child: Container(
+                child: Row(
+                    children: getFoodRowWidgets(context, food)
+                )
+            ),
+            onTap: () => foodRowOnTap(context, food),
           ),
-          onTap: () => foodRowOnTap(context, food),
         ),
     );
   }
@@ -124,48 +148,13 @@ class _MealScreenState extends State<MealScreen> {
 
   Future foodRowOnTap(BuildContext context, Food food) {
     return Future(() {
-      setState(() {
-        addFoodOverlay(food);
+        addFoodOverlay(context, food);
       });
-    });
   }
-  
-  void closeFoodOverlayIfExists() {
+
+  void addFoodOverlay(BuildContext context, Food food) {
     setState(() {
-      overlayWidgets.clear();
+      _foodOverlay.addOverlay(context, food);
     });
-  }
-
-  void addFoodOverlay(Food food) {
-    overlayWidgets.add(
-        buildOpaqueBackgroundContainer()
-    );
-    overlayWidgets.add(
-        buildFoodContainer(food)
-    );
-  }
-
-  Container buildOpaqueBackgroundContainer() {
-    return Container(
-        color: Color.fromARGB(230, 60, 60, 60),
-        child: GestureDetector(
-          onTap: () => closeFoodOverlayIfExists(),
-        )
-    );
-  }
-
-  Align buildFoodContainer(Food food) {
-    return Align(
-          alignment: Alignment.center,
-          child: Container(
-              height: MediaQuery.of(context).size.height * 0.8,
-              width: MediaQuery.of(context).size.width * 0.8,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.all(Radius.elliptical(5, 5)),
-              ),
-              child: Center(child: Text(food.name))
-          )
-      );
   }
 }
