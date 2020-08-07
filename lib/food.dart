@@ -3,8 +3,8 @@ import 'package:fluttertestproj/listItem.dart';
 import 'package:fluttertestproj/nutritionData.dart';
 
 class Food implements FoodListItem{
-  final String name;
-  final NutritionData nutrition;
+  String name;
+  NutritionData nutrition;
 
   Food({String name, NutritionData nutrition}) : this.name=name, this.nutrition = nutrition;
 

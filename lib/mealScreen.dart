@@ -24,18 +24,25 @@ class MealScreen extends StatefulWidget {
 
 class _MealScreenState extends State<MealScreen> {
   _MealScreenState() {
-    _foodOverlay = FoodOverlay();
     EventHandler().subscribe(_overlayCloseEventHandler);
   }
-  var _foodOverlay;
+  final _foodOverlay = FoodOverlay();
+  bool _foodOverlayVisible = false;
 
   void _overlayCloseEventHandler(OverlayCloseEvent event) {
+    //if(event.foodUpdated)
+
+
     closeFoodOverlay();
   }
 
   void closeFoodOverlay() {
-    setState(() {
-      _foodOverlay.clearOverlay();
+    setState(() => _foodOverlayVisible = false);
+
+    Future.delayed(Duration(milliseconds: 200), () => {
+        setState(() {
+        _foodOverlay.clearOverlay();
+      })
     });
   }
 
@@ -49,6 +56,7 @@ class _MealScreenState extends State<MealScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        resizeToAvoidBottomPadding: false,
       appBar: AppBar(
         title: Text(widget.meal.name),
       ),
@@ -65,21 +73,28 @@ class _MealScreenState extends State<MealScreen> {
                     shrinkWrap: true,
                     itemCount: widget.meal.foods.length,
                     itemBuilder: (BuildContext context, int index) {
-                      return buildFoodRow(context, widget.meal.foods[index]);
+                      return buildFoodEntry(context, widget.meal.foods[index]);
                     }
-                ),
+                )
               ]
           ),
-      ] + _foodOverlay.toWidgetList(),
+          AnimatedOpacity(
+              opacity: _foodOverlayVisible ? 1.0 : 0.0,
+              duration: Duration(milliseconds: 200),
+              child: Stack(
+                children: _foodOverlay.toWidgetList(),
+              )
+          )
+      ],
       )
     );
   }
 
-  Widget buildFoodRow(BuildContext context, Food food) {
+  Widget buildFoodEntry(BuildContext context, Food food) {
     return Container(
         height: 50,
         margin: EdgeInsets.all(6),
-        decoration: buildFoodEntryBoxDecoration(),
+        decoration: buildFoodEntryDecoration(),
         child: Material(
           child: InkWell (
             child: Container(
@@ -93,7 +108,7 @@ class _MealScreenState extends State<MealScreen> {
     );
   }
 
-  BoxDecoration buildFoodEntryBoxDecoration() {
+  BoxDecoration buildFoodEntryDecoration() {
     return BoxDecoration(
       border: Border(
           top: BorderSide(width: 1, color: Colors.blueGrey),
@@ -109,17 +124,17 @@ class _MealScreenState extends State<MealScreen> {
     ];
   }
 
-  Container getFoodNameWidget(BuildContext context, Food food) {
+  Widget getFoodNameWidget(BuildContext context, Food food) {
     return Container(
         width: getNameWidth(context),
-        decoration: buildFoodNameDecorationBox(),
+        decoration: buildFoodNameDecoration(),
         child: food.buildName(context)
     );
   }
 
   double getNameWidth(BuildContext context) => MediaQuery.of(context).size.width * 0.7 - 6;
 
-  BoxDecoration buildFoodNameDecorationBox() {
+  BoxDecoration buildFoodNameDecoration() {
     return BoxDecoration(
         border: Border(
           right: BorderSide(width: 2, color: Colors.blueGrey),
@@ -128,17 +143,17 @@ class _MealScreenState extends State<MealScreen> {
     );
   }
 
-  Container getFoodCalsWidget(BuildContext context, Food food) {
+  Widget getFoodCalsWidget(BuildContext context, Food food) {
     return Container(
         width: getFoodCalsWidth(context),
-        decoration: buildFoodCalsDecorationBox(),
+        decoration: buildFoodCalsDecoration(),
         child: food.buildCals(context)
     );
   }
 
   double getFoodCalsWidth(BuildContext context) => MediaQuery.of(context).size.width * 0.3 - 6;
 
-  BoxDecoration buildFoodCalsDecorationBox() {
+  BoxDecoration buildFoodCalsDecoration() {
     return BoxDecoration(
         border: Border(
             right: BorderSide(width: 2, color: Colors.blueGrey)
@@ -154,7 +169,8 @@ class _MealScreenState extends State<MealScreen> {
 
   void addFoodOverlay(BuildContext context, Food food) {
     setState(() {
-      _foodOverlay.addOverlay(context, food);
+        _foodOverlay.addOverlay(context, food);
     });
+    setState(() => _foodOverlayVisible = true);
   }
 }

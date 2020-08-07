@@ -22,6 +22,7 @@ environment:
 
 dependencies:
   eventhandler: ^1.0.4
+  material_design_icons_flutter: ^3.2.3895
   flutter:
     sdk: flutter
 
@@ -49,6 +50,12 @@ flutter:
   # assets:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
+  fonts:
+      - family:  Nutrition
+        fonts:
+         - asset: assets/fonts/Nutrition.ttf
+  assets:
+    - assets/test/egg.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
