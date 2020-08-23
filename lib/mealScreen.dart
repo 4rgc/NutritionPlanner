@@ -1,6 +1,6 @@
 import 'package:eventhandler/eventhandler.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertestproj/foodOverlay.dart';
+import 'package:fluttertestproj/foodContainer.dart';
 import 'package:fluttertestproj/meal.dart';
 
 import 'food.dart';
@@ -26,24 +26,15 @@ class _MealScreenState extends State<MealScreen> {
   _MealScreenState() {
     EventHandler().subscribe(_overlayCloseEventHandler);
   }
-  final _foodOverlay = FoodOverlay();
-  bool _foodOverlayVisible = false;
+  FoodContainer _foodContainer;
+  bool _foodContainerVisible = false;
 
   void _overlayCloseEventHandler(OverlayCloseEvent event) {
-    //if(event.foodUpdated)
-
-
-    closeFoodOverlay();
+    closeFoodContainer();
   }
 
-  void closeFoodOverlay() {
-    setState(() => _foodOverlayVisible = false);
-
-    Future.delayed(Duration(milliseconds: 200), () => {
-        setState(() {
-        _foodOverlay.clearOverlay();
-      })
-    });
+  void closeFoodContainer() {
+    setState(() => _foodContainerVisible = false);
   }
 
   @override
@@ -64,10 +55,6 @@ class _MealScreenState extends State<MealScreen> {
         children: <Widget>[
             Column(
               children: <Widget>[
-                Center(
-                    heightFactor: 3,
-                    child: Text("What you ate for " + widget.meal.name)
-                ),
                 ListView.builder(
                     scrollDirection: Axis.vertical,
                     shrinkWrap: true,
@@ -79,11 +66,10 @@ class _MealScreenState extends State<MealScreen> {
               ]
           ),
           AnimatedOpacity(
-              opacity: _foodOverlayVisible ? 1.0 : 0.0,
+              opacity: _foodContainerVisible ? 1.0 : 0.0,
               duration: Duration(milliseconds: 200),
-              child: Stack(
-                children: _foodOverlay.toWidgetList(),
-              )
+              child: _foodContainer,
+              onEnd: onFoodContainerDisableAnimationEnded,
           )
       ],
       )
@@ -163,14 +149,22 @@ class _MealScreenState extends State<MealScreen> {
 
   Future foodRowOnTap(BuildContext context, Food food) {
     return Future(() {
-        addFoodOverlay(context, food);
+        addFoodContainer(context, food);
       });
   }
 
-  void addFoodOverlay(BuildContext context, Food food) {
+  void addFoodContainer(BuildContext context, Food food) {
     setState(() {
-        _foodOverlay.addOverlay(context, food);
+        _foodContainer = FoodContainer(food, Colors.black);
     });
-    setState(() => _foodOverlayVisible = true);
+    setState(() => _foodContainerVisible = true);
+  }
+
+  onFoodContainerDisableAnimationEnded() {
+    if(!_foodContainerVisible) {
+      setState(() {
+        _foodContainer = null;
+      });
+    }
   }
 }
