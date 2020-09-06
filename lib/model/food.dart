@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertestproj/listItem.dart';
-import 'package:fluttertestproj/nutritionData.dart';
+import 'package:fluttertestproj/components/listItem.dart';
+import 'package:fluttertestproj/model/nutritionData.dart';
 
 class Food implements FoodListItem{
   String name;
   NutritionData nutrition;
+  String imagePath;
 
-  Food({String name, NutritionData nutrition}) : this.name=name, this.nutrition = nutrition;
+  Food({String name, NutritionData nutrition, String imagePath}) :
+        this.name=name, this.nutrition = nutrition, this.imagePath = imagePath;
 
 
   @override

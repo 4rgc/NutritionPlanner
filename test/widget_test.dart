@@ -8,7 +8,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:fluttertestproj/mainScreen.dart';
+import 'package:fluttertestproj/screens/mainScreen.dart';
 
 void main() {
 

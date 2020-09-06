@@ -1,11 +1,13 @@
 import 'package:eventhandler/eventhandler.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertestproj/food.dart';
-import 'package:fluttertestproj/paddedLine.dart';
-import 'package:fluttertestproj/unpaddedLine.dart';
+import 'package:fluttertestproj/model/food.dart';
+import 'package:fluttertestproj/components/paddedLine.dart';
+import 'package:fluttertestproj/components/unpaddedLine.dart';
 
-import 'nutrition_icons.dart';
+import '../model/nutrition_icons.dart';
 import 'opaqueContainer.dart';
+
+//TODO: if field is empty write 0 on apply
 
 class OverlayCloseEvent extends EventBase {
   OverlayCloseEvent({this.foodUpdated});
@@ -13,14 +15,16 @@ class OverlayCloseEvent extends EventBase {
 }
 
 class FoodOverlayControllers {
-  FoodOverlayControllers(Food food) : controllers = {
-    "name":     TextEditingController(text: food.name),
-    "protein":  TextEditingController(text: food.nutrition.proteins.toString()),
-    "fat":      TextEditingController(text: food.nutrition.fat.toString()),
-    "carbs":    TextEditingController(text: food.nutrition.carbs.toString()),
-    "sugar":    TextEditingController(text: food.nutrition.sugar.toString()),
-    "fiber":    TextEditingController(text: food.nutrition.fiber.toString())
-  };
+  FoodOverlayControllers(Food food)
+      : controllers = {
+          "name": TextEditingController(text: food.name),
+          "protein":
+              TextEditingController(text: food.nutrition.proteins.toString()),
+          "fat": TextEditingController(text: food.nutrition.fat.toString()),
+          "carbs": TextEditingController(text: food.nutrition.carbs.toString()),
+          "sugar": TextEditingController(text: food.nutrition.sugar.toString()),
+          "fiber": TextEditingController(text: food.nutrition.fiber.toString())
+        };
 
   final Map<String, dynamic> controllers;
 
@@ -33,9 +37,8 @@ class FoodOverlayControllers {
 }
 
 class FoodContainer extends StatefulWidget {
-
-  FoodContainer(this.food, /*this.width, this.height*/ this.color) :
-        controllers = FoodOverlayControllers(food);
+  FoodContainer(this.food, /*this.width, this.height*/ this.color)
+      : controllers = FoodOverlayControllers(food);
 
   Food food;
   //final double width;
@@ -45,7 +48,6 @@ class FoodContainer extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() => _FoodContainerState(controllers, food);
-
 }
 
 class _FoodContainerState extends State<FoodContainer> {
@@ -57,13 +59,12 @@ class _FoodContainerState extends State<FoodContainer> {
   @override
   Widget build(BuildContext context) {
     return Stack(
-        children: [
-          OpaqueContainer(
-                  () => EventHandler().send(OverlayCloseEvent(foodUpdated: false)),
-              230
-          ),
-          buildFoodContainer(context)
-        ],
+      children: [
+        OpaqueContainer(
+            () => EventHandler().send(OverlayCloseEvent(foodUpdated: false)),
+            230),
+        buildFoodContainer(context)
+      ],
     );
   }
 
@@ -87,25 +88,24 @@ class _FoodContainerState extends State<FoodContainer> {
                   buildFoodFields()
                 ],
               ),
-            )
-        )
-    );
+            )));
   }
 
   Widget buildUpperBar() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        buildDiscardButton(),
-        buildSaveButton()
-      ],
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.1,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[buildDiscardButton(), buildSaveButton()],
+      ),
     );
   }
 
   Widget buildDiscardButton() {
     return IconButton(
+      iconSize: MediaQuery.of(context).size.shortestSide / 20,
       icon: Icon(
-          Icons.close
+        Icons.close,
       ),
       onPressed: onDiscardPressed,
     );
@@ -113,8 +113,9 @@ class _FoodContainerState extends State<FoodContainer> {
 
   Widget buildSaveButton() {
     return IconButton(
+      iconSize: MediaQuery.of(context).size.shortestSide / 20,
       icon: Icon(
-          Icons.check
+        Icons.check,
       ),
       onPressed: onSavePressed,
     );
@@ -136,61 +137,91 @@ class _FoodContainerState extends State<FoodContainer> {
   }
 
   Widget buildFoodFields() {
+    final double verticalPadding = 8.0;
+    final double lineThickness = 1.0;
+    final foodFieldsHeight = (MediaQuery.of(context).size.height * 0.7) - 1;
+
     return Container(
-        child: Column(
-            children: <Widget>[
-              ///TODO: replace empty picture path with real one
-              buildPictureNameBar(''),
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 8.0),
-                child: PaddedLine(),
-              ),
-              buildNutritionDataFields()
-            ])
+        height: foodFieldsHeight,
+        child: Column(children: <Widget>[
+          Container(
+              height: foodFieldsHeight * 0.3 - verticalPadding,
+              child: buildPictureNameBar('')),
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 8.0),
+            child: PaddedLine(),
+          ),
+          Container(
+              height: foodFieldsHeight * 0.7 - verticalPadding - lineThickness,
+              child: buildNutritionDataFields())
+        ]));
+  }
+
+  Widget buildPictureNameBar(String picturePath) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        Image(
+          width: MediaQuery.of(context).size.width * 0.3,
+          image: AssetImage(food.imagePath),
+        ),
+        Container(
+          width: MediaQuery.of(context).size.width * 0.3,
+          child: TextField(
+            controller: controllers.nameController,
+            decoration: buildHintDecoration(" Name"),
+            style: TextStyle(
+                fontSize: MediaQuery.of(context).size.shortestSide / 15),
+          ),
+        )
+      ],
     );
   }
 
   Widget buildNutritionDataFields() {
-    return Container(
-      height: 180,
-      child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            Row(
+    return Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          Flexible(
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 buildProteinField(),
                 buildFatField(),
               ],
             ),
-            Row(
+          ),
+          Flexible(
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 buildCarbsField(),
                 Column(
-                  children: <Widget>[
-                    buildSugarField(),
-                    buildFiberField()
-                  ],
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[buildSugarField(), buildFiberField()],
                 )
               ],
-            )
-          ]),
-    );
+            ),
+          )
+        ]);
   }
 
   Widget buildFiberField() {
-    return Row( // fiber
+    return Row(
+      // fiber
       children: <Widget>[
         buildPaddedIcon(Nutrition.barley),
         Container(
-          width: 100,
+          width: MediaQuery.of(context).size.width * 0.2,
           child: TextField(
               keyboardType: TextInputType.number,
               controller: controllers.fiberController,
-              decoration: buildHintDecoration(" Fiber (g)")
-          ),
+              decoration: buildHintDecoration(" Fiber (g)"),
+              style: TextStyle(
+                  fontSize: MediaQuery.of(context).size.shortestSide / 25)),
         )
       ],
     );
@@ -198,14 +229,18 @@ class _FoodContainerState extends State<FoodContainer> {
 
   InputDecoration buildHintDecoration(String hint) {
     return InputDecoration(
-        hintText: hint
+      hintText: hint,
+      //contentPadding: EdgeInsets.fromLTRB(5.0 , 20.0 , 5.0 , 20.0)
     );
   }
 
   Widget buildPaddedIcon(IconData iconData) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Icon(iconData),
+      child: Icon(
+        iconData,
+        size: MediaQuery.of(context).size.width / 25,
+      ),
     );
   }
 
@@ -214,12 +249,13 @@ class _FoodContainerState extends State<FoodContainer> {
       children: <Widget>[
         buildPaddedIcon(Nutrition.spoon_sugar),
         Container(
-          width: 100,
+          width: MediaQuery.of(context).size.width * 0.2,
           child: TextField(
               keyboardType: TextInputType.number,
               controller: controllers.sugarController,
-              decoration: buildHintDecoration(" Sugar (g)")
-          ),
+              decoration: buildHintDecoration(" Sugar (g)"),
+              style: TextStyle(
+                  fontSize: MediaQuery.of(context).size.shortestSide / 25)),
         )
       ],
     );
@@ -230,11 +266,14 @@ class _FoodContainerState extends State<FoodContainer> {
       children: <Widget>[
         buildPaddedIcon(Nutrition.bread_slice),
         Container(
-          width: 100,
+          width: MediaQuery.of(context).size.width * 0.2,
           child: TextField(
-              keyboardType: TextInputType.number,
-              controller: controllers.carbsController,
-              decoration: buildHintDecoration(" Carbs (g)")
+            keyboardType: TextInputType.number,
+            controller: controllers.carbsController,
+            decoration: buildHintDecoration(" Carbs (g)"),
+            style: TextStyle(
+              fontSize: MediaQuery.of(context).size.shortestSide / 25,
+            ),
           ),
         )
       ],
@@ -246,12 +285,13 @@ class _FoodContainerState extends State<FoodContainer> {
       children: <Widget>[
         buildPaddedIcon(Nutrition.water),
         Container(
-          width: 100,
+          width: MediaQuery.of(context).size.width * 0.2,
           child: TextField(
               keyboardType: TextInputType.number,
               controller: controllers.fatController,
-              decoration: buildHintDecoration(" Fat (g)")
-          ),
+              decoration: buildHintDecoration(" Fat (g)"),
+              style: TextStyle(
+                  fontSize: MediaQuery.of(context).size.shortestSide / 25)),
         )
       ],
     );
@@ -262,39 +302,15 @@ class _FoodContainerState extends State<FoodContainer> {
       children: <Widget>[
         buildPaddedIcon(Nutrition.food_steak),
         Container(
-          width: 100,
+          width: MediaQuery.of(context).size.width * 0.2,
           child: TextField(
               keyboardType: TextInputType.number,
               controller: controllers.proteinController,
-              decoration: buildHintDecoration(" Proteins (g)")
-          ),
+              decoration: buildHintDecoration(" Proteins (g)"),
+              style: TextStyle(
+                  fontSize: MediaQuery.of(context).size.shortestSide / 25)),
         )
       ],
-    );
-  }
-
-  Widget buildPictureNameBar(String picturePath) {
-    return Container(
-      height: 100,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Image(
-              width: 80,
-              height: 80,
-              image: AssetImage('assets/test/egg.jpg')
-          ),
-          Container(
-            width: 180,
-            child: TextField(
-              controller: controllers.nameController,
-              decoration: buildHintDecoration(" Name"),
-
-            ),
-          )
-        ],
-      ),
     );
   }
 }
