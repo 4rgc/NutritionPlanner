@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertestproj/components/countingFoodCard.dart';
-import 'package:fluttertestproj/components/foodCard.dart';
 import 'package:fluttertestproj/components/searchBar.dart';
 import 'package:fluttertestproj/components/searchSwitch.dart';
+import 'package:fluttertestproj/model/fakeCustomFoodSource.dart';
+import 'package:fluttertestproj/model/fakeOnlineFoodSource.dart';
 import 'package:fluttertestproj/model/food.dart';
 import 'package:fluttertestproj/model/foodSource.dart';
 import 'package:fluttertestproj/model/meal.dart';
@@ -11,7 +12,9 @@ class FoodSearchScreen extends StatefulWidget {
   FoodSearchScreen({this.meal});
 
   final Meal meal;
-  List<Food> _foundFoods = FoodSource.data.values.toList();
+  //TODO: replace fake source with real source
+  FoodSource _foodSource = FakeCustomFoodSource();
+  List<Food> _foundFoods = FakeCustomFoodSource().data.values.toList();
 
   @override
   State<StatefulWidget> createState() => _FoodSearchScreenState(meal);
@@ -29,7 +32,6 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print("build called");
     countFoodsInMeal();
     return Scaffold(
       appBar: PreferredSize(
@@ -100,7 +102,8 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
       foodCounters.insert(
           i,
           _meal.foods
-              .where((element) => element == widget._foundFoods.elementAt(i))
+              .where(
+                  (element) => element.equals(widget._foundFoods.elementAt(i)))
               .length);
     }
   }
@@ -122,12 +125,17 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
     });
   }
 
+  //TODO: change the way foods are retrieved from a generic FoodSource
   searchBarTextChanged(String newText) {
+    searchBarText = newText;
     setState(() {
       if (newText == "") {
-        widget._foundFoods = FoodSource.data.values.toList();
+        if (widget._foodSource is FakeCustomFoodSource)
+          widget._foundFoods = widget._foodSource.data.values.toList();
+        else
+          widget._foundFoods = List.empty();
       } else {
-        widget._foundFoods = FoodSource.data.values
+        widget._foundFoods = widget._foodSource.data.values
             .where((element) =>
                 element.name.toLowerCase().contains(newText.toLowerCase()))
             ?.toList();
@@ -138,10 +146,16 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
   }
 
   customPressed() {
-    return;
+    setState(() {
+      widget._foodSource = FakeCustomFoodSource();
+    });
+    searchBarTextChanged(searchBarText);
   }
 
   onlinePressed() {
-    return;
+    setState(() {
+      widget._foodSource = FakeOnlineFoodSource();
+    });
+    searchBarTextChanged(searchBarText);
   }
 }

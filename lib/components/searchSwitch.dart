@@ -18,7 +18,25 @@ class _SearchSwitchState extends State<SearchSwitch> {
     return LayoutBuilder(
       builder: (context, constraints) {
         return ToggleButtons(
-          children: [Text("Custom"), Text("Online")],
+          children: [
+            FittedBox(
+                child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                "Custom",
+                style: TextStyle(fontSize: 100),
+              ),
+            )),
+            FittedBox(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  "Online",
+                  style: TextStyle(fontSize: 100),
+                ),
+              ),
+            )
+          ],
           constraints:
               BoxConstraints.expand(width: constraints.maxWidth / 2 - 1.5),
           onPressed: (int index) {

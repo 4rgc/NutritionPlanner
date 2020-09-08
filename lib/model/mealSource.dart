@@ -1,36 +1,23 @@
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:fluttertestproj/model/food.dart';
-import 'package:fluttertestproj/model/foodSource.dart';
-import 'package:fluttertestproj/components/listItem.dart';
-
+import 'package:fluttertestproj/model/fakeCustomFoodSource.dart';
 import 'meal.dart';
 
 class MealSource {
   static final data = {
-    "1" : Meal(
-      name: "Meal 1",
-      foods: [FoodSource.data["egg"]]
-    ),
-    "2" : Meal(
-        name: "Meal 2",
-        foods: [
-          FoodSource.data["egg"],
-          FoodSource.data["egg"]
-        ]
-    ),
-    "3" : Meal(
-        name: "Meal 3",
-        foods: [
-          FoodSource.data["egg"],
-          FoodSource.data["egg"],
-          FoodSource.data["egg"]
-        ]
-    )
+    "1": Meal(name: "Meal 1", foods: [FakeCustomFoodSource().data["egg"]]),
+    "2": Meal(name: "Meal 2", foods: [
+      FakeCustomFoodSource().data["egg"],
+      FakeCustomFoodSource().data["egg"]
+    ]),
+    "3": Meal(name: "Meal 3", foods: [
+      FakeCustomFoodSource().data["egg"],
+      FakeCustomFoodSource().data["egg"],
+      FakeCustomFoodSource().data["egg"]
+    ])
   };
 
   static double getTotalProteins() {
     var totalProteins = 0.0;
-    for(Meal meal in data.values) {
+    for (Meal meal in data.values) {
       totalProteins += meal.getTotalProteins();
     }
     return totalProteins;
@@ -38,7 +25,7 @@ class MealSource {
 
   static double getTotalFats() {
     var totalFats = 0.0;
-    for(Meal meal in data.values) {
+    for (Meal meal in data.values) {
       totalFats += meal.getTotalFats();
     }
     return totalFats;
@@ -46,7 +33,7 @@ class MealSource {
 
   static double getTotalCarbs() {
     var totalCarbs = 0.0;
-    for(Meal meal in data.values) {
+    for (Meal meal in data.values) {
       totalCarbs += meal.getTotalCarbs();
     }
     return totalCarbs;

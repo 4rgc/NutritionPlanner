@@ -2,19 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:fluttertestproj/components/listItem.dart';
 import 'package:fluttertestproj/model/nutritionData.dart';
 
-class Food implements FoodListItem{
+class Food implements FoodListItem {
   String name;
   NutritionData nutrition;
   String imagePath;
 
-  Food({String name, NutritionData nutrition, String imagePath}) :
-        this.name=name, this.nutrition = nutrition, this.imagePath = imagePath;
-
+  Food({String name, NutritionData nutrition, String imagePath})
+      : this.name = name,
+        this.nutrition = nutrition,
+        this.imagePath = imagePath;
 
   @override
   Widget buildCals(BuildContext context) {
     return Center(
-      child: Text( getTotalCals().toStringAsFixed(1) + " cals" ),
+      child: Text(getTotalCals().toStringAsFixed(1) + " cals"),
     );
   }
 
@@ -24,8 +25,12 @@ class Food implements FoodListItem{
 
   @override
   Widget buildName(BuildContext context) {
-    return Center(
-      child: Text( name )
-    );
+    return Center(child: Text(name));
+  }
+
+  bool equals(Food otherFood) {
+    return this.name == otherFood.name &&
+        this.nutrition.equals(otherFood.nutrition) &&
+        this.imagePath == otherFood.imagePath;
   }
 }
