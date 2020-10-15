@@ -7,8 +7,8 @@ import 'package:fluttertestproj/util/macroColors.dart';
 import '../components/macroPieChart.dart';
 import '../model/meal.dart';
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+class MainScreen extends StatefulWidget {
+  MainScreen({Key key, this.title}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // how it looks.
@@ -21,49 +21,45 @@ class MyHomePage extends StatefulWidget {
   final String title;
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _MainScreenState createState() => _MainScreenState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-
+class _MainScreenState extends State<MainScreen> {
   double totalProteins = MealSource.getTotalProteins();
   double totalFats = MealSource.getTotalFats();
   double totalCarbs = MealSource.getTotalCarbs();
   MacroData macroData = MacroData(
-    proteinGrams: MealSource.getTotalProteins(),
-    fatGrams: MealSource.getTotalFats(),
-    carbsGrams: MealSource.getTotalCarbs(),
-    goalCals: 2000
-  );
+      proteinGrams: MealSource.getTotalProteins(),
+      fatGrams: MealSource.getTotalFats(),
+      carbsGrams: MealSource.getTotalCarbs(),
+      goalCals: 2000);
 
-  _getRequests()async{
+  _getRequests() async {
     setState(() {
       macroData = MacroData(
           proteinGrams: MealSource.getTotalProteins(),
           fatGrams: MealSource.getTotalFats(),
           carbsGrams: MealSource.getTotalCarbs(),
-          goalCals: 2000
-      );
+          goalCals: 2000);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(MediaQuery.of(context).size.height * 0.1),
+        preferredSize:
+            Size.fromHeight(MediaQuery.of(context).size.height * 0.1),
         child: AppBar(
           toolbarHeight: MediaQuery.of(context).size.height * 0.1,
           title: FittedBox(
             child: Text(
-                widget.title,
-                style: TextStyle(
-                  fontSize: MediaQuery.of(context).size.height * 0.08,
-                ),
+              widget.title,
+              style: TextStyle(
+                fontSize: MediaQuery.of(context).size.height * 0.08,
+              ),
             ),
           ),
-
         ),
       ),
       body: Container(
@@ -105,7 +101,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
       ),
-       // This trailing comma makes auto-formatting nicer for build methods.
+      // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 
@@ -113,9 +109,7 @@ class _MyHomePageState extends State<MyHomePage> {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) =>
-                MealScreen(meal: meal),
-        )
-    ).then((val)=>{_getRequests()});
+          builder: (context) => MealScreen(meal: meal),
+        )).then((val) => {_getRequests()});
   }
 }

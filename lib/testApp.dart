@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertestproj/components/countingFoodCard.dart';
 import 'package:fluttertestproj/model/foodSource.dart';
+import 'package:fluttertestproj/screens/testScreen.dart';
+import 'package:fluttertestproj/screens/welcomeScreen.dart';
 
 import 'components/foodCard.dart';
 import 'components/searchBar.dart';
@@ -32,7 +34,7 @@ class MyApp extends StatelessWidget {
         // closer together (more dense) than on mobile platforms.
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: TestScreen(title: "Test Screen"),
+      home: WelcomeScreen(),
     );
   }
 }
