@@ -3,11 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:fluttertestproj/model/meal.dart';
 
 class MealCard extends StatefulWidget {
-  MealCard({this.meal, this.width, this.height, Function(Meal) onTap}) : _onTap = (onTap == null ? () {} : onTap);
+  MealCard({this.meal, double width, double height, Function(Meal) onTap})
+      : _onTap = (onTap == null ? () {} : onTap),
+        width = (width == null ? double.infinity : width),
+        height = (height == null ? double.infinity : height);
 
   final Meal meal;
-  double width;
-  double height;
+  final double width;
+  final double height;
   final Function(Meal) _onTap;
 
   @override
@@ -28,10 +31,7 @@ class _MealCardState extends State<MealCard> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                buildMealName(),
-                buildCalories()
-              ],
+              children: [buildMealName(), buildCalories()],
             ),
           ),
         ),
@@ -42,48 +42,40 @@ class _MealCardState extends State<MealCard> {
   FittedBox buildCalories() {
     return FittedBox(
       fit: BoxFit.fitHeight,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Padding(
-                      padding: const EdgeInsets.only(left: 8),
-                      child: AutoSizeText(
-                        "Cals: ",
-                        style: TextStyle(
-                          fontSize: 120
-                        ),
-                        minFontSize: 20,
-                    )
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 4, right: 8),
-                    child: AutoSizeText(
-                        widget.meal.getTotalCals().toString(),
-                        style: TextStyle(
-                          fontSize: 100
-                        ),
-                      minFontSize: 20,
-                    ),
-                  )
-                ],
-              ),
-            );
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Padding(
+              padding: const EdgeInsets.only(left: 8),
+              child: AutoSizeText(
+                "Cals: ",
+                style: TextStyle(fontSize: 120),
+                minFontSize: 20,
+              )),
+          Padding(
+            padding: const EdgeInsets.only(top: 4, right: 8),
+            child: AutoSizeText(
+              widget.meal.getTotalCals().toString(),
+              style: TextStyle(fontSize: 100),
+              minFontSize: 20,
+            ),
+          )
+        ],
+      ),
+    );
   }
 
   Padding buildMealName() {
     return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: FittedBox(
-                fit: BoxFit.fitHeight,
-                child: Text(
-                  widget.meal.name,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 120
-                  ),
-                ),
-              ),
-            );
+      padding: const EdgeInsets.all(8.0),
+      child: FittedBox(
+        fit: BoxFit.fitHeight,
+        child: Text(
+          widget.meal.name,
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 120),
+        ),
+      ),
+    );
   }
 }

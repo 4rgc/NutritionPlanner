@@ -15,6 +15,10 @@ class MealSource {
     ])
   };
 
+  static getMeal(int index) {
+    return data[index.toString()];
+  }
+
   static double getTotalProteins() {
     var totalProteins = 0.0;
     for (Meal meal in data.values) {

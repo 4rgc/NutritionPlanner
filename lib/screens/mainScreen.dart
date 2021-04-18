@@ -47,49 +47,39 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize:
-            Size.fromHeight(MediaQuery.of(context).size.height * 0.1),
-        child: AppBar(
-          toolbarHeight: MediaQuery.of(context).size.height * 0.1,
-          title: FittedBox(
-            child: Text(
-              widget.title,
-              style: TextStyle(
-                fontSize: MediaQuery.of(context).size.height * 0.08,
-              ),
-            ),
-          ),
-        ),
-      ),
+      appBar: AppBar(title: Text(widget.title)),
       body: Container(
         child: Scaffold(
           body: Column(
             children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  MealCard(
-                    meal: MealSource.data["1"],
-                    width: MediaQuery.of(context).size.width * 0.3,
-                    height: MediaQuery.of(context).size.height * 0.3,
-                    onTap: onMealCardTapped,
-                  ),
-                  MealCard(
-                    meal: MealSource.data["2"],
-                    width: MediaQuery.of(context).size.width * 0.3,
-                    height: MediaQuery.of(context).size.height * 0.3,
-                    onTap: onMealCardTapped,
-                  ),
-                  MealCard(
-                    meal: MealSource.data["3"],
-                    width: MediaQuery.of(context).size.width * 0.3,
-                    height: MediaQuery.of(context).size.height * 0.3,
-                    onTap: onMealCardTapped,
-                  ),
-                ],
+              Expanded(
+                flex: 2,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Expanded(
+                      child: MealCard(
+                        meal: MealSource.getMeal(1),
+                        onTap: onMealCardTapped,
+                      ),
+                    ),
+                    Expanded(
+                      child: MealCard(
+                        meal: MealSource.getMeal(2),
+                        onTap: onMealCardTapped,
+                      ),
+                    ),
+                    Expanded(
+                      child: MealCard(
+                        meal: MealSource.getMeal(3),
+                        onTap: onMealCardTapped,
+                      ),
+                    ),
+                  ],
+                ),
               ),
               Expanded(
+                flex: 3,
                 child: MacroPieChart(
                   macroData: macroData,
                   proteinColor: MacroColors.proteins,

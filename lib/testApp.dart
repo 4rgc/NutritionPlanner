@@ -1,12 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertestproj/components/countingFoodCard.dart';
-import 'package:fluttertestproj/model/foodSource.dart';
-import 'package:fluttertestproj/screens/testScreen.dart';
-import 'package:fluttertestproj/screens/welcomeScreen.dart';
-
-import 'components/foodCard.dart';
-import 'components/searchBar.dart';
-import 'components/searchSwitch.dart';
+import 'package:fluttertestproj/components/macroPieChart.dart';
+import 'package:fluttertestproj/util/macroColors.dart';
 
 void main() {
   runApp(MyApp());
@@ -34,7 +28,7 @@ class MyApp extends StatelessWidget {
         // closer together (more dense) than on mobile platforms.
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: WelcomeScreen(),
+      home: TestScreen(),
     );
   }
 }
@@ -109,7 +103,16 @@ class _TestScreenState extends State<TestScreen> {
                 Container(
                     width: _widthValue,
                     height: _heightValue,
-                    child: SearchSwitch())
+                    child: MacroPieChart(
+                      macroData: MacroData(
+                          proteinGrams: 50,
+                          carbsGrams: 100,
+                          fatGrams: 30,
+                          goalCals: 2000),
+                      proteinColor: MacroColors.proteins,
+                      carbsColor: MacroColors.carbs,
+                      fatColor: MacroColors.fats,
+                    ))
               ],
             )
           ],
